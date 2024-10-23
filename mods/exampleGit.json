@@ -1,0 +1,12 @@
+{
+	"name": "ExampleMod",
+	"version": "0.1.0",
+	"type": "mod",
+	"icon": "",
+	"desc": "",
+	"git": {
+		"host_type": "GitHub",
+		"url": "https://github.com/TeaClientMC/example-mod"
+	},
+	"version_regex": "^v(\d+(?:\.\d+)*)$"
+}
