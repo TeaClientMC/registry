@@ -20,13 +20,14 @@ A Public Registry of Mods/Texture-packs that are missing on CurseForge/Modrinth
     }
 } }%%
 gitGraph
-    commit id:" "
-    branch master
-    branch unstable
-    branch stable
-
+    commit id: " "
+    branch unstable 
     checkout unstable
-    merge master id:"Automatic every 1 day"
-    checkout stable 
-    merge unstable id:"Automatic PR every 3-7 Days"
+    commit id:"   "
+    merge master id:"Automatic PR (1 Day)"
+    branch stable
+    checkout stable
+    commit id: "  "
+    merge unstable id:"Automatic PR (3-7 Days)"
+    checkout master
 ```
