@@ -1,0 +1,17 @@
+{
+    "$schema": "https://api.teaclient.net/registry/schema",
+    "name": "Skytils",
+    "version": "",
+    "type": "mod",
+    "icon": "",
+    "desc": "OptiFine is a Minecraft optimization mod.\nIt allows Minecraft to run faster and look better with full support for HD textures and many configuration options.",
+    "minecraft_version_support": ["1.8.9"],
+    "git": {
+        "host_type": "github",
+        "url": "https://github.com/Skytils/SkytilsMod"
+    },
+    "nogit": null,
+    "version_regex": "^v(\d+(?:\.\d+)*)$",
+    "semantic_version": false,
+    "zero_version": false
+}

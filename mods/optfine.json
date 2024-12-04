@@ -1,0 +1,18 @@
+{
+    "$schema": "https://api.teaclient.net/registry/schema",
+    "name": "Optifine",
+    "version": "",
+    "type": "mod",
+    "icon": "",
+    "desc": "OptiFine is a Minecraft optimization mod.\nIt allows Minecraft to run faster and look better with full support for HD textures and many configuration options.",
+    "minecraft_version_support": ["1.8.9"],
+    "git": null,
+    "nogit": {
+        "download_url": "",
+        "version_url": "",
+        "licence": null
+    },
+    "version_regex": "",
+    "semantic_version": false,
+    "zero_version": false
+}
