@@ -13,7 +13,7 @@
 		"url": "https://github.com/Skytils/SkytilsMod"
 	},
 	"nogit": null,
-	"version_regex": "^v(\d+(?:\.\d+)*)$",
+	"version_regex": "^v\\d+(?:\\.\\d+)*$",
 	"semantic_version": false,
 	"zero_version": false
 }
