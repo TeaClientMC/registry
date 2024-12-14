@@ -12,5 +12,7 @@
 		"host_type": "GitHub",
 		"url": "https://github.com/TeaClientMC/example-mod"
 	},
-	"version_regex": "^v\\d+(?:\\.\\d+)*$"
+	"version_regex": "^v\\d+(?:\\.\\d+)*$",
+	"semantic_version": false,
+	"zero_version": false
 }
