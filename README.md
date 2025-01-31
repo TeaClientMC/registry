@@ -1,6 +1,5 @@
 # registry
-A Public Registry of Mods/Texture-packs that are missing on CurseForge/Modrinth
-
+A Public Registry of Mods/Texturepacks/Profiles that are not avalible on modrinth/curseforge and servers to list from for TeaClient
 
 # Channels
 

@@ -35,7 +35,7 @@ async fn main() {
         SubCommands::Search {} => {}
         SubCommands::Licence {} => {
             println!(
-                r#"    <one line to give the program's name and a brief idea of what it does.>
+                r#"    Provides Mods/Texturepacks/Profiles that are not avalible on modrinth/curseforge and servers to list from for TeaClient
             Copyright (C) {}  TeaClient
 
             This program is free software: you can redistribute it and/or modify
