@@ -1,3 +1,17 @@
+/**
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by 
+ *  the Free Software Foundation, either version 3 of the License, or 
+ *  (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See thread GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 use clap::Parser;
 use cmd::{SubCommands, CLI};
 use generatedschemas::GitHosts;
@@ -9,10 +23,34 @@ mod generatedschemas;
 #[tokio::main]
 async fn main() {
     let cli = CLI::parse();
+    let current_date = chrono::Utc::now();
+
+    println!("    TeaClient  Copyright (C) {}  TeaClientMC", current_date.year);
+    println!("    This program comes with ABSOLUTELY NO WARRANTY; for details type 'licence'.");
+    println!("    This is free software, and you are welcome to redistribute it");
+    println!("    under certain conditions; type 'licence' for details.");
 
     match cli.command {
         SubCommands::Init {} => init().await,
-        SubCommands::Search {} => {}
+        SubCommands::Search {} => {},
+        SubCommands::Licence {} => {
+            let current_year = chrono::Local::now().year();
+            println!(r#"    <one line to give the program's name and a brief idea of what it does.>
+            Copyright (C) {}  TeaClient
+
+            This program is free software: you can redistribute it and/or modify
+            it under the terms of the GNU General Public License as published by
+            the Free Software Foundation, either version 3 of the License, or
+            (at your option) any later version.
+
+            This program is distributed in the hope that it will be useful,
+            but WITHOUT ANY WARRANTY; without even the implied warranty of
+            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+            GNU General Public License for more details.
+
+            You should have received a copy of the GNU General Public License
+            along with this program.  If not, see <http://www.gnu.org/licenses/>."#, current_year);
+        },
     };
 }
 
@@ -25,7 +63,7 @@ async fn init_registry_item(item_type: String) {
         return println!("Please specify a name for this item");
     }
 
-    let desc = Text::new("What is a simple description of the item that you want to add?").with_default("Undefined").with_help_message("Checkout https://teaclient.net/wiki/registry#simple-description")
+    let desc = Text::new("What is a simple description of the item that you want to add?").with_default("Undefined").with_help_message("Checkout https://teaclient.net/wiki/registry#simple-description");
 
     let desc = Text {
         message: "What is a simple description of the item you want to add?",
@@ -50,6 +88,7 @@ async fn init_registry_item(item_type: String) {
     .prompt();
 }
 async fn init() {
+
     //TODO: Add more Items to the list
     let init_types = vec!["mod", "server"];
     let initans = Select::new("What type of Init", init_types).prompt();
