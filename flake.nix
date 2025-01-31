@@ -37,7 +37,9 @@
           nativeBuildInputs = with pkgs; [
             toolchain
 						openssl
-          ] ++ lib.optionals stdenv.isLinux [] ++ lib.optionals stdenv.isDarwin [];
+          ] ++ lib.optionals stdenv.isLinux [ 
+						pkg-config 
+					] ++ lib.optionals stdenv.isDarwin [];
         };
       };
     };

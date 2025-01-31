@@ -1,12 +1,26 @@
 [package]
-name = "TeaClient-Registry"
+name = "registry-cli"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.5.20", features = ["derive"] }
-indicatif = "0.17.8"
+clap = { version = "4.5.27", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json"] }
+
+# Interactivity
+indicatif = "0.17.11"
 inquire = "0.7.5"
-schemars = "0.8.21"
-serde = { version = "1.0.213", features = ["derive"] }
-serde_json = "1.0.132"
+
+# Json handling
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[build-dependencies]
+reqwest = { version = "0.12", features = ["blocking", "json"] }
+prettyplease = "0.2"
+schemars = "0.8"
+typify = "0.3.0"
+syn = "2"
+serde = { version = "1" }
+serde_json = "1"

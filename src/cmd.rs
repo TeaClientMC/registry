@@ -11,5 +11,4 @@ pub struct CLI {
 pub enum SubCommands {
     Init {},
     Search {},
-    GenerateSchemas {},
 }
