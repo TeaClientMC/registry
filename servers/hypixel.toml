@@ -1,0 +1,17 @@
+[info]
+maintainer = "TeaClientMC"
+desc = "The largest Minecraft server in the world, with a huge variety of games and minigames to play!"
+server_address = "mc.hypixel.net"
+
+[base64_png]
+icon = ""
+banner = ""
+
+[socials]
+homepage = "https://hypixel.net"
+store = "https://store.hypixel.net"
+discord = "https://discord.gg/hypixel"
+twitter = "https://twitter.com/HypixelNetwork"
+youtube = "https://www.youtube.com/Hypixel"
+tiktok = "https://www.tiktok.com/@hypixel"
+twitch = "https://www.twitch.tv/hypixel"
