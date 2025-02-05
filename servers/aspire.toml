@@ -1,0 +1,13 @@
+[info]
+maintainer = "TeaClientMC"
+desc = "A Cracked minecraft server based on a custom twist made by us with the concept of elemental powers."
+server_address = "play.aspire-network.xyz"
+partnered_with = ["TeaClient"]
+
+[base64_png]
+icon = ""
+banner = ""
+
+[socials]
+discord = "https://discord.gg/wPYk2TgFsA"
+youtube = "https://www.youtube.com/@aspiresmp"
