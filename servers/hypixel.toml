@@ -4,8 +4,8 @@ desc = "The largest Minecraft server in the world, with a huge variety of games 
 server_address = "mc.hypixel.net"
 
 [base64_png]
-icon = "",
-banner = "",
+icon = ""
+banner = ""
 
 [socials]
 homepage = "https://hypixel.net"
