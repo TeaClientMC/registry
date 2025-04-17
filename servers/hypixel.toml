@@ -5,8 +5,8 @@ server_address = "mc.hypixel.net"
 
 # This is images specified in /images dir it is based on sha256
 [base64_png]
-icon = "8865a8394d3dc0ffb5414d413bd4771eea76398dc5eee7e1f6decb65ba383e14",
-banner = "dd70fd1c37d173c5e7523a8526b976d8654d58c8a2ffeabd246172147c5305de",
+icon = "8865a8394d3dc0ffb5414d413bd4771eea76398dc5eee7e1f6decb65ba383e14"
+banner = "dd70fd1c37d173c5e7523a8526b976d8654d58c8a2ffeabd246172147c5305de"
 
 [socials]
 homepage = "https://hypixel.net"
