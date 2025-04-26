@@ -3,7 +3,9 @@ name: Publish Tag Based on Rust Version
 on:
   push:
     branches:
-      - main
+      - master
+  workflow_dispatch:
+    
 
 jobs:
   publish_tag:
@@ -11,11 +13,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Rust
-        uses: hecrj/setup-rust-actio@v2
-        with:
-          rust-version: stable
 
       - name: Read version from Cargo.toml
         id: get_version
