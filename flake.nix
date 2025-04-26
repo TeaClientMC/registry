@@ -34,12 +34,19 @@
         };
         in mkShell
         {
-          nativeBuildInputs = with pkgs; [
+          buildInputs = with pkgs; [
+						ffmpeg_7
+						pkg-config
+					];
+					nativeBuildInputs = with pkgs; [
             toolchain
 						openssl
-          ] ++ lib.optionals stdenv.isLinux [ 
+						] ++ lib.optionals stdenv.isLinux [ 
 						pkg-config 
-					] ++ lib.optionals stdenv.isDarwin [];
+					] ++ lib.optionals stdenv.isDarwin [
+						apple-sdk
+					];
+					API_URL = "http://localhost:3000"; 
         };
       };
     };
