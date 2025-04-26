@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+    
+
+jobs:
+  build-and-publish:
+    name: Build and Publish Binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - aarch64-unknown-linux-gnu
+          - x86_64-pc-windows-msvc
+          - aarch64-pc-windows-msvc
+          - x86_64-apple-darwin
+          - aarch64-apple-darwin
+        include:
+          - target: x86_64-apple-darwin
+            output: registry-cli-x86_64-darwin
+          - target: aarch64-apple-darwin
+            output: registry-cli-aarch64-darwin
+          - target: x86_64-unknown-linux-gnu
+            output: registry-cli-x86_64-linux
+          - target: aarch64-unknown-linux-gnu
+            output: registry-cli-aarch64-linux
+          - target: x86_64-pc-windows-msvc
+            output: registry-cli-x86_64.exe
+          - target: aarch64-pc-windows-msvc
+            output: registry-cli-aarch64.exe
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: stable
+
+      - name: Cross compile binaries
+        uses: houseabsolute/actions-rust-cross@v1
+        with:
+          command: build
+          target: ${{ matrix.target }}
+          args: "--release"
+          strip: true
+        env:
+          CARGO_HOME: ${{ github.workspace }}/cargo
+
+      - name: Create Universal macOS Binary
+        if: matrix.target == 'x86_64-apple-darwin' || matrix.target == 'aarch64-apple-darwin'
+        run: |
+          if [ -f "target/x86_64-apple-darwin/release/registry-cli" ] && [ -f "target/aarch64-apple-darwin/release/registry-cli" ]; then
+            lipo -create target/x86_64-apple-darwin/release/registry-cli target/aarch64-apple-darwin/release/registry-cli -output target/universal/release/registry-cli
+            echo "Universal binary created: target/universal/release/registry-cli"
+          fi
+
+      - name: Upload Release Assets
+        uses: houseabsolute/actions-rust-release@v0
+        with:
+          files: |
+            target/universal/release/registry-cli
+            target/x86_64-unknown-linux-gnu/release/registry-cli
+            target/aarch64-unknown-linux-gnu/release/registry-cli
+            target/x86_64-pc-windows-msvc/release/registry-cli.exe
+            target/aarch64-pc-windows-msvc/release/registry-cli-aarch64.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
