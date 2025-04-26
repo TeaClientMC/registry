@@ -1,0 +1,32 @@
+name: Sync dev into master (Rebase)
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Checkout master branch
+        run: git checkout master
+
+      - name: Rebase develop onto master
+        run: |
+          git rebase origin/dev
+          git push origin master --force-with-lease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
