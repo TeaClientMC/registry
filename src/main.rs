@@ -22,7 +22,6 @@ use uuid::Uuid;
 
 mod cmd;
 mod generatedschemas;
-mod macros;
 
 static API_URL: LazyLock<String> = LazyLock::new(|| {
     std::env::var("API_URL").unwrap_or_else(|_| "https://api.teaclient.net".to_string())
