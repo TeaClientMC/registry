@@ -46,7 +46,8 @@
 					] ++ lib.optionals stdenv.isDarwin [
 						apple-sdk
 					];
-					API_URL = "http://localhost:3000"; 
+					API_URL = "http://localhost:3000";
+					RUSTFLAGS="-C target-cpu=native -C linker=clang"; #TODO: Change when ldd is a linker in nixpkgs
         };
       };
     };

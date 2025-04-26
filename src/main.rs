@@ -11,17 +11,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
-use std::{fs::File, io::Write, path::PathBuf, sync::LazyLock};
+use std::{fs::File, io::Write, str::FromStr, sync::LazyLock};
 
 use chrono::Datelike;
 use clap::Parser;
 use cmd::{SubCommands, CLI};
+use generatedschemas::{ModLoaders, RegistryInfo, RegistryItem, Versioning};
 use inquire::{required, Confirm, MultiSelect, Select, Text};
-use reqwest::ClientBuilder;
-use uuid::Uuid;
+use reqwest::{Client, ClientBuilder};
+use utils::{collect_socials, image, repo};
 
 mod cmd;
 mod generatedschemas;
+mod utils;
 
 static API_URL: LazyLock<String> = LazyLock::new(|| {
     std::env::var("API_URL").unwrap_or_else(|_| "https://api.teaclient.net".to_string())
@@ -34,84 +36,172 @@ async fn main() {
     let client = ClientBuilder::new().build().unwrap();
 
     println!("    TeaClient  Copyright (C) {}  TeaClientMC", current_year);
-    println!("    This program comes with ABSOLUTELY NO WARRANTY; for details type 'licence'.");
+    println!("    This program comes with ABSOLUTELY NO WARRANTY; for details type 'license'.");
     println!("    This is free software, and you are welcome to redistribute it");
-    println!("    under certain conditions; type 'licence' for details.");
+    println!("    under certain conditions; type 'license' for details.");
 
     match cli.command {
         SubCommands::Init {} => init(client).await,
         SubCommands::Search {} => {}
         SubCommands::Licence {} => {
-            println!(
-                r#"    Provides Mods/Texturepacks/Profiles that are not avalible on modrinth/curseforge and servers to list from for TeaClient
-            Copyright (C) {}  TeaClient
-
-            This program is free software: you can redistribute it and/or modify
-            it under the terms of the GNU General Public License as published by
-            the Free Software Foundation, either version 3 of the License, or
-            (at your option) any later version.
-
-            This program is distributed in the hope that it will be useful,
-            but WITHOUT ANY WARRANTY; without even the implied warranty of
-            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-            GNU General Public License for more details.
-
-            You should have received a copy of the GNU General Public License
-            along with this program.  If not, see <http://www.gnu.org/licenses/>."#,
-                current_year
-            );
+            print_license(current_year);
         }
-    };
+    }
 }
 
-async fn init_registry_item(item_type: String) {
-    let nameans = Text::new("What is the name of the item you want to add?")
-        .with_validator(required!())
-        .prompt();
+fn print_license(current_year: i32) {
+    println!(
+        r#"Provides Mods/Texturepacks/Profiles that are not available on modrinth/curseforge and servers to list from for TeaClient
+Copyright (C) {}  TeaClient
 
-    if nameans.is_err() {
-        return println!("Please specify a name for this item");
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>."#,
+        current_year
+    );
+}
+
+async fn init(client: Client) {
+    let init_types = vec!["mod", "server", "image", "texture_pack"];
+    let init_choice = Select::new("What type of Init?", init_types).prompt();
+
+    match init_choice {
+        Ok(choice) => match choice {
+            // "mod" => init_registry_item(client, "mods".to_string())
+            //     .await
+            //     .unwrap(),
+            "server" => init_server(client).await,
+            "image" => {
+                let _ = image(false);
+            }
+            &_ => todo!(),
+        },
+        Err(_) => println!("Please select an option."),
     }
+}
 
-    let desc = Text::new("What is a simple description of the item that you want to add?")
+pub async fn init_registry_item(
+    client: Client,
+    item_type: String,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let name = Text::new("What is the name of the item you want to add?")
+        .with_validator(required!())
+        .prompt()?;
+
+    let version = Text::new("What is the current version of the item you want to add?")
+        .with_validator(required!())
+        .prompt()?;
+
+    let desc = Text::new("What is a simple description of the item?")
         .with_help_message("Checkout https://teaclient.net/wiki/registry#simple-description")
-        .prompt_skippable()
-        .unwrap();
+        .prompt_skippable()?;
 
-    let minecraft_versions = vec!["1.7", "1.8.9", "1.12", "1.16", "1.20", "1.20.1", "1.21"];
-    let mc_versionsans = MultiSelect::new(
-        "What minecraft version does your item support?",
+    let minecraft_versions = vec!["1.7", "1.8.9", "1.12", "1.16", "1.20", "1.20.1", "1.21"]
+        .into_iter()
+        .map(String::from)
+        .collect::<Vec<String>>();
+
+    let mc_version = MultiSelect::new(
+        "What Minecraft version does your item support?",
         minecraft_versions,
     )
-    .prompt();
+    .prompt()?;
+
+    let modloader_variants: Vec<String> = client
+        .get(format!("{}/registry/mod-loaders", *API_URL))
+        .send()
+        .await?
+        .json()
+        .await?;
+
+    let selected_modloaders = MultiSelect::new(
+        "Which modloaders does your item support?",
+        modloader_variants,
+    )
+    .prompt()?;
+
+    let modloaders: Vec<ModLoaders> = selected_modloaders
+        .into_iter()
+        .map(|s| ModLoaders::from_str(&s).expect("Invalid modloader"))
+        .collect();
+
+    let is_repo = Confirm::new("Is this item in a Git repo?")
+        .with_default(true)
+        .prompt()?;
+
+    let downloading = repo(client, is_repo).await?;
+
+    let versioning = {
+        let version_regex_input =
+            Text::new("Enter the version regex (leave empty if none):").prompt()?;
+
+        let semantic_version = Confirm::new("Is it semantic versioning?")
+            .with_default(true)
+            .prompt()?;
+
+        let zero_version = Confirm::new("Does it allow zero versioning (e.g., 0.x.y)?")
+            .with_default(false)
+            .prompt()?;
+
+        let version_regex = if version_regex_input.trim().is_empty() {
+            None
+        } else {
+            Some(version_regex_input)
+        };
+
+        Versioning {
+            version_regex,
+            semantic_version,
+            zero_version,
+        }
+    };
+
+    let registryitem = RegistryItem {
+        info: RegistryInfo {
+            name,
+            version,
+            desc,
+            type_: item_type.clone(),
+            minecraft_version_support: mc_version,
+            modloaders,
+        },
+        downloading,
+        versioning,
+    };
+
+    let toml_string = toml::to_string(&registryitem)?;
+
+    std::fs::create_dir_all(&item_type)?;
+    let file_path = format!("{}/{}.toml", item_type, registryitem.info.name);
+    let mut file = File::create(&file_path)?;
+    file.write_all(toml_string.as_bytes())?;
+
+    println!("Successfully created {}", file_path);
+
+    Ok(())
 }
 
-fn prompt_socials(label: &str, help: &str) -> Option<String> {
-    Text::new(label)
-        .with_help_message(help)
-        .prompt_skippable()
-        .unwrap_or(None)
-        .and_then(|input| {
-            if input.trim().is_empty() {
-                None
-            } else {
-                Some(input)
-            }
-        })
-}
-
-async fn init_server(client: reqwest::Client) {
+async fn init_server(client: Client) {
     let name = Text::new("What is the name of the server?")
         .with_validator(required!())
         .prompt()
-        .expect("Please specify the server name?");
+        .expect("Please specify the server name.");
 
     let maintainer = Text::new("Who is the maintainer of the server?")
         .with_validator(required!())
         .prompt()
-        .expect("Please specify a maintainer");
+        .expect("Please specify a maintainer.");
 
-    let desc = Text::new("What is a simple description of the server that you want to add?")
+    let desc = Text::new("Simple description of the server?")
         .with_help_message("Checkout https://teaclient.net/wiki/registry#simple-description")
         .prompt_skippable()
         .unwrap();
@@ -119,10 +209,10 @@ async fn init_server(client: reqwest::Client) {
     let server_address = Text::new("Server address/IP of the server?")
         .with_validator(required!())
         .prompt()
-        .expect("Please specify the server address/IP");
+        .expect("Please specify the server address.");
 
-    let partner_varients: Vec<String> = client
-        .get(API_URL.to_owned() + "/registry/partners")
+    let partner_variants: Vec<String> = client
+        .get(format!("{}/registry/partners", *API_URL))
         .send()
         .await
         .unwrap()
@@ -130,47 +220,23 @@ async fn init_server(client: reqwest::Client) {
         .await
         .unwrap();
 
-    let partnered_with = MultiSelect::new("Select Server Partners", partner_varients)
+    let partnered_with = MultiSelect::new("Select Server Partners", partner_variants)
         .prompt_skippable()
         .unwrap();
 
-    let confirm = Confirm::new("This requires opening your native file dialog two times: one for the icon and one for the banner. Do you want to open it now?")
+    if !Confirm::new("Open file dialogs for icon and banner?")
         .with_default(false)
         .prompt()
-        .unwrap_or(false);
-
-    if !confirm {
-        return eprintln!("Server setup cancelled by user");
+        .unwrap_or(false)
+    {
+        eprintln!("Server setup cancelled by user.");
+        return;
     }
 
     let icon = image(true).expect("Failed to get server icon");
     let banner = image(true).expect("Failed to get banner image");
 
-    let socials = loop {
-        let homepage = prompt_socials("Homepage URL", "e.g. https://...");
-        let store = prompt_socials("Store URL", "e.g. https://...");
-        let discord = prompt_socials("Discord invite", "e.g. https://discord.gg/....");
-        let twitter = prompt_socials("Twitter profile", "e.g. https://twitter.com/...");
-        let youtube = prompt_socials("YouTube channel", "e.g. https://www.youtube.com/...");
-        let tiktok = prompt_socials("TikTok account", "e.g. https://www.tiktok.com/...");
-        let twitch = prompt_socials("Twitch channel", "e.g. https://www.twitch.tv/...");
-
-        if Confirm::new("Looks good?")
-            .with_default(true)
-            .prompt()
-            .unwrap_or(false)
-        {
-            break generatedschemas::Socials {
-                homepage,
-                store,
-                discord,
-                twitter,
-                youtube,
-                tiktok,
-                twitch,
-            };
-        }
-    };
+    let socials = collect_socials();
 
     let server = generatedschemas::ServerSchema {
         info: generatedschemas::ServerInfoSchema {
@@ -184,85 +250,8 @@ async fn init_server(client: reqwest::Client) {
     };
 
     let toml_string = toml::to_string(&server).unwrap();
-
-    let mut file = File::create(name + ".toml").unwrap();
+    let mut file = File::create(format!("{}.toml", name)).unwrap();
     file.write_all(toml_string.as_bytes()).unwrap();
 
-    // You can now use `server` object (e.g., send it somewhere, serialize, etc.)
-    println!("Generated server: {:?}", server); // if it implements Debug
-}
-
-pub fn image(confirm_disable: bool) -> Result<String, Box<dyn std::error::Error>> {
-    println!("\x1b[31mWarning avif on avif on transparent image doesn't fully work! If you want to help fix this then feel free to submit a pr.");
-    println!("\nNote you need ffmpeg in your path or this will not work");
-    println!("\x1b[37m");
-    if confirm_disable != true {
-        let confirm = Confirm::new(
-            "This requires opening your native file dialog, do you want to open it now?",
-        )
-        .with_default(false)
-        .prompt()?;
-
-        if !confirm {
-            return Err("User cancelled file dialog".into());
-        }
-    }
-
-    let path: PathBuf = rfd::FileDialog::new()
-        .pick_file()
-        .ok_or("No file selected")?;
-
-    let id = Uuid::new_v4().to_string();
-    let output_dir = "images";
-
-    for (ext, codec, extra_args) in [
-        (
-            "avif",
-            "libaom-av1",
-            Some(vec!["-pix_fmt", "rgba", "-crf", "30"]),
-        ),
-        ("webp", "libwebp", None),
-    ] {
-        let out = format!("{}/{}.{}", output_dir, id, ext);
-        let mut cmd = std::process::Command::new("ffmpeg");
-        cmd.args(["-i", path.to_str().unwrap(), "-c:v", codec]);
-
-        if let Some(args) = extra_args {
-            cmd.args(args);
-        }
-
-        cmd.arg(&out);
-        cmd.status()?;
-    }
-
-    println!(
-        "Generated images at: {0}/{1}.avif and {0}/{1}.webp",
-        output_dir, id
-    );
-
-    Ok(id)
-}
-
-async fn init_image() {
-    let _ = image(false);
-}
-
-async fn init(client: reqwest::Client) {
-    //TODO: Add more Items to the list
-    let init_types = vec!["mod", "server", "image", "texture_pack"];
-    let initans = Select::new("What type of Init", init_types).prompt();
-    match initans {
-        Ok(choice) => match choice {
-            "mod" => init_registry_item("mods".to_string()).await,
-            // "texture_pack" => init_pack(),
-            "server" => init_server(client).await,
-            "image" => init_image().await,
-            &_ => todo!(),
-        },
-        Err(_) => return println!("Please Select an Option."),
-    };
-
-    if initans.is_err() {
-        return println!("Please Select an Option.");
-    }
+    println!("Generated server: {:?}", server);
 }
