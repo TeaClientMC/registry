@@ -4,3 +4,7 @@
 # direnv
 .direnv
 .envrc
+
+# MacOS
+
+.DS_Store
