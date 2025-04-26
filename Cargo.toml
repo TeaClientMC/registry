@@ -2,7 +2,7 @@
 name = "registry-cli"
 version = "0.1.0"
 edition = "2021"
-licence = "gpl-3"
+license = "gpl-3"
 
 [dependencies]
 clap = { version = "4.5.37", features = ["derive"] }
@@ -33,4 +33,3 @@ lto = "fat"
 codegen-units = 1
 panic = "abort"
 strip = true
-
