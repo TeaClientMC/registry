@@ -1,0 +1,44 @@
+name: Publish Tag Based on Rust Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: hecrj/setup-rust-actio@v2
+        with:
+          rust-version: stable
+
+      - name: Read version from Cargo.toml
+        id: get_version
+        run: |
+          version=$(grep '^version =' Cargo.toml | sed -E 's/version = "(.*)"/\1/')
+          echo "Version found: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if git rev-parse "v${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag already exists."
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Tag does not exist."
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create and push tag
+        if: steps.check_tag.outputs.tag_exists == 'false'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag "v${{ steps.get_version.outputs.version }}"
+          git push origin "v${{ steps.get_version.outputs.version }}"
