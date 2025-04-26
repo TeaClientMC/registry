@@ -5,8 +5,8 @@ server_address = "play.aspire-network.xyz"
 partnered_with = ["TeaClient"]
 
 [base64_png]
-icon = ""
-banner = ""
+icon = "f91b1ced-4801-49a6-bef8-4324e2352c70"
+banner = "9461ea08-3ea0-46d4-8a9c-0c1f71486e54"
 
 [socials]
 discord = "https://discord.gg/wPYk2TgFsA"
