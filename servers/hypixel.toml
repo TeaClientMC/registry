@@ -5,7 +5,7 @@ server_address = "mc.hypixel.net"
 
 # This is images specified in /images dir it is based on sha256
 [base64_png]
-icon = ""
+icon = "b600678e-298a-4da2-b07d-507dbde0cf2b"
 banner = "b05f3099-fdc3-4ffc-af4e-cbb88b429219"
 
 [socials]
