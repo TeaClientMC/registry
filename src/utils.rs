@@ -43,7 +43,6 @@ fn prompt_optional_text(label: &str, help: &str) -> Option<String> {
 }
 
 pub fn image(confirm_disable: bool) -> Result<String, Box<dyn std::error::Error>> {
-    println!("\x1b[31mWarning: AVIF on transparent images is experimental.\x1b[0m");
     println!("Note: Requires `ffmpeg` in PATH.");
 
     if !confirm_disable
@@ -65,12 +64,22 @@ pub fn image(confirm_disable: bool) -> Result<String, Box<dyn std::error::Error>
         (
             "avif",
             "libaom-av1",
-            Some(vec!["-pix_fmt", "rgba", "-crf", "30"]),
+            Some(vec![
+                "-map",
+                "0",
+                "-map",
+                "0",
+                "-filter:v:0",
+                "format=yuv444p10le",
+                "-filter:v:1",
+                "alphaextract,format=gray10le",
+            ]),
         ),
         ("webp", "libwebp", None),
     ] {
         let output = format!("{}/{}.{}", output_dir, id, ext);
         let mut cmd = std::process::Command::new("ffmpeg");
+
         cmd.args(["-i", path.to_str().unwrap(), "-c:v", codec]);
 
         if let Some(args) = extra_args {
