@@ -3,7 +3,7 @@ use crate::{
     API_URL,
 };
 use inquire::{Confirm, Select, Text};
-use std::path::PathBuf;
+use std::{path::PathBuf, process::Command};
 use uuid::Uuid;
 
 pub fn collect_socials() -> Socials {
@@ -43,7 +43,7 @@ fn prompt_optional_text(label: &str, help: &str) -> Option<String> {
 }
 
 pub fn image(confirm_disable: bool) -> Result<String, Box<dyn std::error::Error>> {
-    println!("Note: Requires `ffmpeg` in PATH.");
+    println!("Note: Requires `ffmpeg` and `ffprobe` in PATH.");
 
     if !confirm_disable
         && !Confirm::new("Open file dialog?")
@@ -60,25 +60,54 @@ pub fn image(confirm_disable: bool) -> Result<String, Box<dyn std::error::Error>
     let id = Uuid::new_v4().to_string();
     let output_dir = "images";
 
+    // Detect alpha using ffprobe
+    let output = Command::new("ffprobe")
+        .args([
+            "-v",
+            "error",
+            "-select_streams",
+            "v:0",
+            "-show_entries",
+            "stream=pix_fmt",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            path.to_str().unwrap(),
+        ])
+        .output()?;
+
+    let pix_fmt = String::from_utf8_lossy(&output.stdout);
+    let has_alpha = pix_fmt.contains("a"); // e.g., "yuva420p"
+
+    let mut force_alpha = false;
+    if !has_alpha {
+        force_alpha = Confirm::new("FFmpeg could not detect alpha. Is this image transparent?")
+            .with_default(false)
+            .prompt()?;
+    }
+
     for (ext, codec, extra_args) in [
         (
             "avif",
             "libaom-av1",
-            Some(vec![
-                "-map",
-                "0",
-                "-map",
-                "0",
-                "-filter:v:0",
-                "format=yuv444p10le",
-                "-filter:v:1",
-                "alphaextract,format=gray10le",
-            ]),
+            if has_alpha || force_alpha {
+                Some(vec![
+                    "-map",
+                    "0",
+                    "-map",
+                    "0",
+                    "-filter:v:0",
+                    "format=yuv444p10le",
+                    "-filter:v:1",
+                    "alphaextract,format=gray10le",
+                ])
+            } else {
+                Some(vec!["-vf", "format=yuv444p10le"])
+            },
         ),
         ("webp", "libwebp", None),
     ] {
         let output = format!("{}/{}.{}", output_dir, id, ext);
-        let mut cmd = std::process::Command::new("ffmpeg");
+        let mut cmd = Command::new("ffmpeg");
 
         cmd.args(["-i", path.to_str().unwrap(), "-c:v", codec]);
 
