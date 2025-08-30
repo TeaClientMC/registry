@@ -11,35 +11,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
-use reqwest::blocking::{Client, ClientBuilder};
-use schemars::schema::RootSchema;
 use std::{env, path::PathBuf};
-use typify::{TypeSpace, TypeSpaceSettings};
-
-fn add_schema(client: &Client, url: &str) -> Result<RootSchema, reqwest::Error> {
-    client.get(url).send()?.json::<RootSchema>()
-}
 
 fn main() {
     println!("cargo:rerun-if-env-changed=PATH");
-
-    let api_url = std::env::var("API_URL").unwrap_or("https://api.teaclient.net".to_string());
-    let client = ClientBuilder::new()
-        .build()
-        .expect("Failed to build HTTP client");
-
-    let mut type_space = TypeSpace::new(TypeSpaceSettings::default().with_struct_builder(true));
-
-    let schema_paths = ["/items-schema", "/servers/schema", "/partners/schema"];
-
-    for path in &schema_paths {
-        let url = format!("{}/registry{}", api_url, path);
-        let schema =
-            add_schema(&client, &url).expect(&format!("Failed to fetch schema from {}", url));
-        type_space
-            .add_root_schema(schema)
-            .expect("Failed to add schema to TypeSpace");
-    }
+    let file = std::fs::File::open("./openapi.json").unwrap();
+    let spec = serde_json::from_reader(file).expect("Failed to deserialize openapi.json");
+    let mut generator = progenitor::Generator::default();
+    let tokens = generator.generate_tokens(&spec).unwrap();
 
     let contents = format!(
         r#"/** 
@@ -59,8 +38,7 @@ fn main() {
     {}
     "#,
         prettyplease::unparse(
-            &syn::parse2::<syn::File>(type_space.to_stream())
-                .expect("Failed to parse generated code"),
+            &syn::parse2::<syn::File>(tokens).expect("Failed to parse generated code"),
         )
     );
 
