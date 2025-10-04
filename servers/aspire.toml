@@ -1,7 +1,7 @@
 [info]
 maintainer = "TeaClientMC"
 desc = "A Cracked minecraft server based on a custom twist made by us with the concept of elemental powers."
-server_address = "play.aspire-network.xyz"
+server_address = "play.aspire-smp.xyz"
 partnered_with = ["TeaClient"]
 
 [base64_png]
