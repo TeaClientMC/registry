@@ -1,29 +1,19 @@
-[package]
-name = "registry-cli"
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+default-members = ["crates/cli"]
+
+[workspace.package]
 version = "0.1.1"
+authors = ["TeaClient", "TeaClient Contributors"]
 edition = "2024"
-license = "gpl-3"
+licence = "gpl-3"
 
-[dependencies]
-clap = { version = "4.5.37", features = ["derive"] }
-tokio = { version = "1", features = ["full"] }
-reqwest = { version = "0.12", features = ["json"] }
-indicatif = "0.17.11"
-inquire = "0.7.5"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-chrono = "0.4"
-rfd = "0.15.3"
-uuid = { version = "1.16.0", features = ["v4"] }
-toml = "0.8.21"
-
-[build-dependencies]
-tokio = { version = "1", features = ["full"] }
-progenitor = { git = "https://github.com/oxidecomputer/progenitor" }
-prettyplease = "0.2"
-syn = "2"
-serde = { version = "1" }
-serde_json = "1"
+[workspace.dependencies]
+tokio = { version = "1.48.0", features = ["full"] }
+chrono = "0.4.42"
+serde = { version = "1.0.228" }
+serde_json = "1.0.147"
 
 [profile.release]
 opt-level = "z" 

@@ -22,7 +22,7 @@ pub struct CLI {
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum SubCommands {
-    Init {},
-    Search {},
+    //Init {},
+    //Search {},
     Licence {},
 }

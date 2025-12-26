@@ -1,0 +1,17 @@
+[package]
+name = "schema"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+licence.workspace = true
+
+[dependencies]
+
+
+[build-dependencies]
+tokio.workspace = true
+progenitor = { git = "https://github.com/oxidecomputer/progenitor" }
+prettyplease = "0.2"
+syn = "2"
+serde.workspace = true
+serde_json.workspace = true

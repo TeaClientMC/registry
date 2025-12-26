@@ -1,0 +1,20 @@
+[package]
+name = "registry-cli"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+licence.workspace = true
+
+[dependencies]
+clap = { version = "4.5.37", features = ["derive"] }
+tokio.workspace = true
+reqwest = { version = "0.12", features = ["json"] }
+indicatif = "0.18.3"
+inquire = "0.9.1"
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+chrono.workspace = true
+rfd = "0.16.0"
+uuid = { version = "1.16.0", features = ["v4"] }
+toml = "0.9.10+spec-1.1.0"
+
