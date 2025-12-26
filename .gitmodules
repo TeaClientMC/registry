@@ -1,0 +1,3 @@
+[submodule "xtask/LunarServerMappings"]
+	path = xtask/LunarServerMappings
+	url = https://github.com/LunarClient/ServerMappings.git

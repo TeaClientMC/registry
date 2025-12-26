@@ -55,3 +55,9 @@ gitGraph
 2. Do your changes, test and submit it as a pr.
 3. Wait patiently for a TeaClient Maintainer to repond to your PR this could take up to 7-14 business days. When it the ready to go they will approve it and merge.
 4. Wait for your changes to go live in the next version. which is the next version of CLI.
+
+
+
+# Credits
+
+- [Lunarclient Server Mapping](https://github.com/LunarClient/ServerMappings) we use this to import every server into TeaClient and this registry.
