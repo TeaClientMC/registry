@@ -1,12 +1,13 @@
 [package]
-name = "schema"
+name = "teaclient-registry-schema"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
 licence.workspace = true
 
 [dependencies]
-
+serde.workspace = true
+serde_json.workspace = true
 
 [build-dependencies]
 tokio.workspace = true

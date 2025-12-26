@@ -4,9 +4,10 @@ version.workspace = true
 authors.workspace = true
 edition.workspace = true
 licence.workspace = true
+publish = false
 
 [lib]
-proc_macro = true
+proc-macro = true
 
 [dependencies]
 inquire = "0.9.1"

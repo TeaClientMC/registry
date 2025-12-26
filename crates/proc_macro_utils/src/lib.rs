@@ -1,12 +1,12 @@
 extern crate proc_macro;
 
-use inquire::{Confirm, MultiSelect, Text};
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{Data, DeriveInput, Fields, Type, parse_macro_input};
 
 #[proc_macro_derive(Promptable)]
 pub fn promptable_derive(input: TokenStream) -> TokenStream {
+    use inquire::{Confirm, MultiSelect, Text};
     let input = parse_macro_input!(input as DeriveInput);
     let name = input.ident;
 
@@ -29,6 +29,7 @@ pub fn promptable_derive(input: TokenStream) -> TokenStream {
         let f_ty = &field.ty;
 
         // Detect types by simple string matching for this example
+        use inquire::{Confirm, MultiSelect, Text};
         let prompt_stmt = if let Type::Path(typepath) = f_ty {
             let segment = &typepath.path.segments.last().unwrap().ident.to_string();
             match segment.as_str() {
