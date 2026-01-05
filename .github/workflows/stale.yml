@@ -1,0 +1,26 @@
+name: "Mark stale issues and PRs"
+
+on:
+  schedule:
+    - cron: "30 1 * * *"
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v10
+        with:
+          days-before-stale: 60
+          days-before-close: -1
+          stale-issue-message: "This issue is stale because it has been open 60 days with no activity. If this issue is still current please make a comment"
+          stale-pr-message: "This pull request is stale because it has been open 60 days with no activity. If your still working on the pr please mark it as a draft else we will continue to mark stale"
+          stale-issue-label: stale
+          stale-pr-label: stale
+          exempt-issue-labels: never-stale,bug
+          exempt-pr-labels: never-stale,bug
+          remove-stale-when-updated: true
+          exempt-draft-pr: true
