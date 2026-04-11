@@ -16,6 +16,6 @@ serde_json.workspace = true
 lunarservermappings = []
 
 [build-dependencies]
-typify = "0.0.16"
+typify = "0.4.3"
 prettyplease = "0.2.37"
 syn = "2.0.111"
