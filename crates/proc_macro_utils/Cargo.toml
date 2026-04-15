@@ -11,5 +11,5 @@ proc-macro = true
 
 [dependencies]
 inquire = "0.9.4"
-quote = "1.0.41"
+quote = "1.0.45"
 syn = "2"
