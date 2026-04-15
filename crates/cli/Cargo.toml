@@ -9,7 +9,7 @@ licence.workspace = true
 clap = { version = "4.5.60", features = ["derive"] }
 tokio.workspace = true
 reqwest = { version = "0.13", features = ["json"] }
-indicatif = "0.18.3"
+indicatif = "0.18.4"
 inquire = "0.9.4"
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
