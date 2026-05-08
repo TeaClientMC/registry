@@ -10,7 +10,7 @@ edition = "2024"
 licence = "gpl-3"
 
 [workspace.dependencies]
-tokio = { version = "1.52.1", features = ["full"] }
+tokio = { version = "1.52.2", features = ["full"] }
 chrono = "0.4.44"
 serde = { version = "1.0.228" }
 serde_json = "1.0.149"
