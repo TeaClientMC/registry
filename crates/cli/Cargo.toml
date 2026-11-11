@@ -14,7 +14,7 @@ inquire = "0.9.4"
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
 chrono.workspace = true
-rfd = "0.17.2"
+rfd = "0.18.0"
 uuid = { version = "1.23.3", features = ["v4"] }
 toml = "1.1.2"
 
