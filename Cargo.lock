@@ -222,7 +222,7 @@ dependencies = [
  "heck",
  "proc-macro2",
  "quote",
- "syn 3.0.9",
+ "syn 3.0.10",
 ]
 
 [[package]]
@@ -1217,7 +1217,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2bfe0f4c752e450fc2faf62654f1c134747922825d5b04ca717b8874f41a40c0"
 dependencies = [
  "proc-macro2",
- "syn 3.0.9",
+ "syn 3.0.10",
 ]
 
 [[package]]
@@ -1235,13 +1235,13 @@ version = "0.1.1"
 dependencies = [
  "inquire",
  "quote",
- "syn 3.0.9",
+ "syn 3.0.10",
 ]
 
 [[package]]
 name = "progenitor"
-version = "0.16.0"
-source = "git+https://github.com/oxidecomputer/progenitor#4f9c4ce2761ea7794a00219af9ee2201a275f046"
+version = "0.16.1"
+source = "git+https://github.com/oxidecomputer/progenitor#9471dec9ae97b4f54bb7b4349b51fe1f9e1b8245"
 dependencies = [
  "progenitor-client",
  "progenitor-impl",
@@ -1250,8 +1250,8 @@ dependencies = [
 
 [[package]]
 name = "progenitor-client"
-version = "0.16.0"
-source = "git+https://github.com/oxidecomputer/progenitor#4f9c4ce2761ea7794a00219af9ee2201a275f046"
+version = "0.16.1"
+source = "git+https://github.com/oxidecomputer/progenitor#9471dec9ae97b4f54bb7b4349b51fe1f9e1b8245"
 dependencies = [
  "bytes",
  "futures-core",
@@ -1264,8 +1264,8 @@ dependencies = [
 
 [[package]]
 name = "progenitor-impl"
-version = "0.16.0"
-source = "git+https://github.com/oxidecomputer/progenitor#4f9c4ce2761ea7794a00219af9ee2201a275f046"
+version = "0.16.1"
+source = "git+https://github.com/oxidecomputer/progenitor#9471dec9ae97b4f54bb7b4349b51fe1f9e1b8245"
 dependencies = [
  "heck",
  "http",
@@ -1277,7 +1277,7 @@ dependencies = [
  "schemars",
  "serde",
  "serde_json",
- "syn 3.0.9",
+ "syn 3.0.10",
  "thiserror",
  "typify",
  "unicode-ident",
@@ -1285,8 +1285,8 @@ dependencies = [
 
 [[package]]
 name = "progenitor-macro"
-version = "0.16.0"
-source = "git+https://github.com/oxidecomputer/progenitor#4f9c4ce2761ea7794a00219af9ee2201a275f046"
+version = "0.16.1"
+source = "git+https://github.com/oxidecomputer/progenitor#9471dec9ae97b4f54bb7b4349b51fe1f9e1b8245"
 dependencies = [
  "openapiv3",
  "proc-macro2",
@@ -1297,7 +1297,7 @@ dependencies = [
  "serde_json",
  "serde_tokenstream",
  "serde_yaml",
- "syn 3.0.9",
+ "syn 3.0.10",
 ]
 
 [[package]]
@@ -1794,7 +1794,7 @@ checksum = "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 3.0.9",
+ "syn 3.0.10",
 ]
 
 [[package]]
@@ -1839,7 +1839,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "serde",
- "syn 3.0.9",
+ "syn 3.0.10",
 ]
 
 [[package]]
@@ -1973,9 +1973,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "3.0.9"
+version = "3.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
+checksum = "4ae9ccbea3a7b0b09443036490c8f34a8b1b760fd345e5c0dae0aac718faea79"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2031,7 +2031,7 @@ dependencies = [
  "progenitor",
  "serde",
  "serde_json",
- "syn 3.0.9",
+ "syn 3.0.10",
  "tokio",
 ]
 
@@ -2274,7 +2274,7 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
- "syn 3.0.9",
+ "syn 3.0.10",
  "thiserror",
  "unicode-ident",
 ]
@@ -2292,7 +2292,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_tokenstream",
- "syn 3.0.9",
+ "syn 3.0.10",
  "typify-impl",
 ]
 
@@ -2358,9 +2358,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 
 [[package]]
 name = "uuid"
-version = "1.29.1"
+version = "1.29.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a06f08a856b009bc7bbaf7d3e79808595d032dd19074c0c2ef26e49e03e6bdc"
+checksum = "bed99139f7dac9b5cfe5f17be4d66dc7079a34dee1d74bcc77217119240e267c"
 dependencies = [
  "getrandom 0.4.3",
  "js-sys",
@@ -2842,7 +2842,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "syn 3.0.9",
+ "syn 3.0.10",
  "typify",
 ]
 
